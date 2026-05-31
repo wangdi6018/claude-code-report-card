@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>왕디님의 Claude Code 성적표</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=DM+Mono:wght@500&display=swap" />
+<style>
+  :root {
+    /* 삼쩜삼 베이스 */
+    --primary: #237AF2;
+    --primary-soft: #E8F1FE;
+    --primary-deep: #1B5FC4;
+    --bg: #F5F6F8;
+    --surface: #FFFFFF;
+    --text-strong: #141618;
+    --text: #2B2F34;
+    --text-muted: #49515A;
+    --text-mute: #8B95A1;
+    --line: #E5E7EB;
+    --line-soft: #F1F3F6;
+
+    /* 액센트 (재미 요소) */
+    --gold: #FFC93D;
+    --gold-soft: #FFF4CC;
+    --mint: #38C5A8;
+    --mint-soft: #DBF2EC;
+    --coral: #FF7A59;
+    --coral-soft: #FFE3DA;
+    --grape: #8B5CF6;
+    --grape-soft: #ECE4FE;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .page { max-width: 880px; margin: 32px auto; padding: 0 24px 60px; }
+
+  /* ─── 헤더 ─── */
+  header.cover {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 32px 32px 28px;
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  header.cover::after {
+    content: ""; position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    background: var(--primary-soft);
+    border-radius: 50%;
+    z-index: 0;
+  }
+  header.cover::before {
+    content: "📊"; position: absolute;
+    top: 32px; right: 36px;
+    font-size: 48px;
+    z-index: 1;
+  }
+  .cover-tag {
+    background: var(--primary-soft); color: var(--primary);
+    display: inline-block;
+    padding: 5px 12px; font-size: 11px; font-weight: 700;
+    border-radius: 999px;
+    letter-spacing: 0.06em;
+    margin-bottom: 14px;
+    position: relative; z-index: 2;
+  }
+  .cover h1 {
+    font-family: 'Fredoka', 'Pretendard', sans-serif;
+    margin: 0 0 6px; font-size: 28px; line-height: 1.25;
+    color: var(--text-strong);
+    letter-spacing: -0.015em; font-weight: 600;
+    position: relative; z-index: 2;
+  }
+  .cover h1 .pop {
+    background: linear-gradient(180deg, transparent 60%, var(--gold-soft) 60%);
+    padding: 0 3px;
+  }
+  .cover .sub {
+    font-size: 14px; color: var(--text-muted);
+    margin-top: 6px;
+    position: relative; z-index: 2;
+  }
+  .cover .meta {
+    display: flex; gap: 8px; margin-top: 20px;
+    flex-wrap: wrap;
+    position: relative; z-index: 2;
+  }
+  .cover .meta span {
+    background: var(--line-soft);
+    border: 1px solid var(--line);
+    padding: 5px 11px; border-radius: 999px;
+    font-size: 12px; font-weight: 500;
+    color: var(--text);
+  }
+
+  /* ─── 종합 점수 (트로피 메달) ─── */
+  .summary {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 28px 32px;
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+  .trophy {
+    width: 160px; aspect-ratio: 1;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .trophy-ring {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(var(--primary) 0% 92%, var(--line) 92% 100%);
+    padding: 8px;
+  }
+  .trophy-inner {
+    background: var(--surface);
+    border-radius: 50%; width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2px;
+  }
+  .trophy-emoji { font-size: 28px; margin-bottom: 2px; }
+  .trophy-grade {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 44px; font-weight: 700; line-height: 1;
+    color: var(--text-strong);
+  }
+  .trophy-pts {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--text-muted); font-weight: 500;
+    background: var(--primary-soft);
+    padding: 2px 8px; border-radius: 999px;
+    margin-top: 4px;
+  }
+
+  .summary-text h2 {
+    font-family: 'Fredoka', 'Pretendard', sans-serif;
+    margin: 0 0 10px; font-size: 22px; line-height: 1.35;
+    color: var(--text-strong); font-weight: 600;
+  }
+  .summary-text h2 .hl { color: var(--primary); }
+  .summary-text p {
+    margin: 0; color: var(--text-muted); font-size: 14.5px; line-height: 1.65;
+  }
+  .summary-text b { color: var(--text-strong); font-weight: 700; background: var(--gold-soft); padding: 0 4px; border-radius: 3px; }
+
+  /* ─── 등급 한눈에 보기 (스코어 라인) ─── */
+  .scoreline {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 22px 28px;
+    margin-bottom: 16px;
+  }
+  .scoreline-title {
+    font-size: 12px; color: var(--text-muted); font-weight: 600;
+    margin-bottom: 14px; letter-spacing: 0.04em;
+  }
+  .scoreline-grid {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;
+  }
+  .scoreline-cell {
+    text-align: center; padding: 12px 4px;
+    background: var(--line-soft);
+    border-radius: 12px;
+    transition: transform .15s;
+  }
+  .scoreline-cell:hover { transform: translateY(-2px); }
+  .scoreline-cell .lv { font-size: 10px; color: var(--text-mute); font-weight: 600; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .scoreline-cell .grade {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 22px; font-weight: 700; line-height: 1;
+  }
+  .scoreline-cell.A { background: var(--mint-soft); }
+  .scoreline-cell.A .grade { color: var(--mint); }
+  .scoreline-cell.B { background: var(--primary-soft); }
+  .scoreline-cell.B .grade { color: var(--primary); }
+  .scoreline-cell.C { background: var(--coral-soft); }
+  .scoreline-cell.C .grade { color: var(--coral); }
+  .scoreline-cell.D { background: #FFE0E0; }
+  .scoreline-cell.D .grade { color: #E5484D; }
+
+  /* ─── 영상 6단계 ─── */
+  .video-summary {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+  }
+  .video-head {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 10px; margin-bottom: 14px;
+  }
+  .video-eyebrow {
+    background: var(--grape-soft); color: var(--grape);
+    padding: 4px 11px; font-size: 11px; font-weight: 700;
+    border-radius: 999px; letter-spacing: 0.06em;
+  }
+  .video-title {
+    font-family: 'Fredoka', 'Pretendard', sans-serif;
+    font-size: 17px; color: var(--text-strong); margin: 0; flex: 1;
+    font-weight: 600;
+  }
+  .video-link {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: var(--primary); text-decoration: none;
+    background: var(--primary-soft);
+    padding: 4px 9px; border-radius: 6px;
+    font-weight: 500;
+  }
+  .video-link:hover { background: var(--primary); color: #fff; }
+  .video-lede {
+    font-size: 14.5px; color: var(--text); line-height: 1.65;
+    margin: 0 0 18px;
+  }
+  .video-lede b { color: var(--text-strong); background: var(--primary-soft); padding: 0 3px; border-radius: 3px; }
+  .video-list {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .video-list li {
+    background: var(--line-soft);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    transition: all .15s;
+  }
+  .video-list li:hover {
+    background: var(--surface);
+    border-color: var(--primary);
+    transform: translateY(-1px);
+  }
+  .lv-head {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+  }
+  .lv-num {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 11px; color: #fff;
+    background: var(--primary);
+    padding: 2px 8px; border-radius: 6px;
+    font-weight: 700;
+  }
+  .lv-name {
+    font-size: 14px; font-weight: 700; color: var(--text-strong);
+  }
+  .lv-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.55; }
+  .video-note {
+    font-size: 12.5px; color: var(--text-muted);
+    background: var(--gold-soft);
+    border-left: 3px solid var(--gold);
+    padding: 10px 14px; border-radius: 8px;
+    margin: 18px 0 0; line-height: 1.6;
+  }
+  .video-note b { color: var(--text-strong); }
+
+  /* ─── 섹션 제목 ─── */
+  h3.section {
+    font-family: 'Fredoka', 'Pretendard', sans-serif;
+    font-size: 17px; color: var(--text-strong);
+    margin: 28px 0 14px;
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 600;
+  }
+  h3.section .emoji {
+    display: inline-flex; width: 30px; height: 30px;
+    background: var(--gold-soft); border-radius: 8px;
+    align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+
+  /* ─── 점수 카드 ─── */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 640px) {
+    .cards { grid-template-columns: 1fr; }
+    .summary { grid-template-columns: 1fr; text-align: center; }
+    .trophy { margin: 0 auto; }
+    .video-list { grid-template-columns: 1fr; }
+    .scoreline-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px 22px;
+    transition: all .15s;
+  }
+  .card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 16px rgba(35, 122, 242, 0.08);
+    transform: translateY(-2px);
+  }
+  .card .top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px; margin-bottom: 8px;
+  }
+  .card .lv {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+    color: var(--text-mute);
+  }
+  .grade-badge {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 22px; font-weight: 700; line-height: 1;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .grade-badge::after {
+    content: ""; position: absolute;
+    top: -2px; right: -2px;
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+  }
+  .g-A { background: var(--mint-soft); color: var(--mint); }
+  .g-B { background: var(--primary-soft); color: var(--primary); }
+  .g-C { background: var(--coral-soft); color: var(--coral); }
+  .g-D { background: #FFE0E0; color: #E5484D; }
+  .g-D::after, .g-C::after { background: var(--coral); }
+
+  .card h4 {
+    font-family: 'Fredoka', 'Pretendard', sans-serif;
+    margin: 6px 0 10px; font-size: 16px; color: var(--text-strong);
+    font-weight: 600;
+  }
+  .metric {
+    font-size: 14px; color: var(--text); margin-bottom: 12px;
+    display: flex; align-items: baseline; gap: 6px;
+  }
+  .metric b {
+    font-family: 'DM Mono', monospace;
+    color: var(--text-strong); font-weight: 600;
+    background: var(--line-soft); padding: 1px 6px; border-radius: 4px;
+  }
+  /* 게이지 (별 마커 포함) */
+  .gauge {
+    position: relative; margin: 10px 0 14px;
+  }
+  .gauge-bar {
+    height: 8px; background: var(--line-soft);
+    border-radius: 999px; overflow: hidden;
+  }
+  .gauge-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, #4F95F6 100%);
+    border-radius: 999px;
+    position: relative;
+  }
+  .gauge-fill::after {
+    content: ""; position: absolute;
+    top: 50%; right: -4px;
+    transform: translateY(-50%);
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .gauge-fill.mint { background: linear-gradient(90deg, var(--mint) 0%, #5DD4BA 100%); }
+  .gauge-fill.coral { background: linear-gradient(90deg, var(--coral) 0%, #FF9D80 100%); }
+
+  .evidence { font-size: 12.5px; color: var(--text-muted); line-height: 1.65; }
+  .evidence code {
+    background: var(--line-soft);
+    padding: 1px 6px; border-radius: 4px;
+    font-size: 11.5px; font-family: 'DM Mono', monospace;
+    color: var(--text);
+  }
+  .evidence b { color: var(--text-strong); font-weight: 600; }
+
+  /* ─── 코멘트 ─── */
+  .insight {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-top: 12px;
+    position: relative;
+  }
+  .insight.good { border-left: 4px solid var(--mint); }
+  .insight.warn { border-left: 4px solid var(--coral); }
+  .insight h4 {
+    font-family: 'Fredoka', 'Pretendard', sans-serif;
+    margin: 0 0 12px; font-size: 16px; color: var(--text-strong);
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 600;
+  }
+  .insight h4 .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--mint-soft); color: var(--mint);
+    padding: 2px 8px; border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+    font-family: 'Pretendard', sans-serif;
+  }
+  .insight.warn h4 .badge { background: var(--coral-soft); color: var(--coral); }
+  .insight ul { margin: 0; padding-left: 20px; color: var(--text); font-size: 14px; line-height: 1.75; }
+  .insight ul li { margin-bottom: 6px; }
+  .insight ul li b { color: var(--text-strong); background: var(--gold-soft); padding: 0 4px; border-radius: 3px; font-weight: 600; }
+  .insight ul li code {
+    background: var(--line-soft);
+    padding: 1px 5px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 11.5px;
+    color: var(--text);
+  }
+
+  /* ─── 액션 ─── */
+  .actions {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px 26px;
+    margin-top: 14px;
+  }
+  .actions h4 {
+    font-family: 'Fredoka', 'Pretendard', sans-serif;
+    margin: 0 0 16px; font-size: 16px; color: var(--text-strong);
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 600;
+  }
+  .actions h4 .emoji {
+    display: inline-flex; width: 26px; height: 26px;
+    background: var(--primary-soft); border-radius: 8px;
+    align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .actions ol {
+    margin: 0; padding-left: 0;
+    color: var(--text); font-size: 14px; line-height: 1.7;
+    list-style: none; counter-reset: action;
+  }
+  .actions ol li {
+    margin-bottom: 10px; counter-increment: action;
+    padding: 12px 14px 12px 48px;
+    background: var(--line-soft);
+    border-radius: 10px;
+    position: relative;
+    transition: all .15s;
+  }
+  .actions ol li:hover {
+    background: var(--primary-soft);
+    transform: translateX(3px);
+  }
+  .actions ol li::before {
+    content: counter(action);
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    width: 26px; height: 26px;
+    background: var(--primary); color: #fff;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 13px; font-weight: 700;
+  }
+  .actions ol li b { color: var(--primary); background: #fff; padding: 1px 5px; border-radius: 3px; font-weight: 700; }
+  .actions ol li code {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 1px 5px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 11.5px;
+    color: var(--text);
+  }
+
+  /* ─── 푸터 ─── */
+  footer {
+    text-align: center;
+    color: var(--text-mute);
+    font-size: 12px;
+    margin-top: 32px;
+    line-height: 1.7;
+  }
+  footer .stamp {
+    display: inline-block;
+    background: var(--primary); color: #fff;
+    padding: 4px 12px; border-radius: 999px;
+    font-weight: 600; font-size: 11px;
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+  }
+  footer code {
+    background: var(--line-soft);
+    padding: 1px 5px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; color: var(--text);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ─── 표지 ─── -->
+  <header class="cover">
+    <span class="cover-tag">CLAUDE CODE 6-LEVEL ASSESSMENT</span>
+    <h1>왕디님의 <span class="pop">Claude Code</span><br/>성적표 ✨</h1>
+    <div class="sub">"The 6 Levels of Claude Code" 본인 적용 결과</div>
+    <div class="meta">
+      <span>📅 2026-04-24 ~ 05-24</span>
+      <span>⏱ 159 세션</span>
+      <span>🛠 자작 스킬 29개</span>
+    </div>
+  </header>
+
+  <!-- ─── 종합 점수 (트로피) ─── -->
+  <section class="summary">
+    <div class="trophy">
+      <div class="trophy-ring">
+        <div class="trophy-inner">
+          <div class="trophy-emoji">🏆</div>
+          <div class="trophy-grade">A−</div>
+          <div class="trophy-pts">3.67 / 4.0</div>
+        </div>
+      </div>
+    </div>
+    <div class="summary-text">
+      <h2>와, <span class="hl">Lv 5</span>까지 거의 다 정복했어요! ✨<br/>이제 마지막 <span class="hl">Lv 6</span> 하나만 남았어요</h2>
+      <p>30일 만에 종합 등급이 <b>B+ → A−</b>로 한 단계 점프했어요 🙌 활동량·계획·도구·스킬 4개 영역에서 전부 A 받았고요. 남은 미션은 딱 하나, <b>Subagent 다양화 (Lv 6)</b>! 멀티에이전트 한 번만 시도해봐도 만점(4.0) 바로 가능. 정말 거의 다 왔어요 💪</p>
+    </div>
+  </section>
+
+  <!-- ─── 스코어라인 (등급 한눈에) ─── -->
+  <section class="scoreline">
+    <div class="scoreline-title">📊 내 점수 한눈에 보기 (Lv 1 → Lv 6)</div>
+    <div class="scoreline-grid">
+      <div class="scoreline-cell A"><div class="lv">LV 1</div><div class="grade">A</div></div>
+      <div class="scoreline-cell A"><div class="lv">LV 2</div><div class="grade">A</div></div>
+      <div class="scoreline-cell A"><div class="lv">LV 3</div><div class="grade">A</div></div>
+      <div class="scoreline-cell A"><div class="lv">LV 4</div><div class="grade">A</div></div>
+      <div class="scoreline-cell A"><div class="lv">LV 5</div><div class="grade">A</div></div>
+      <div class="scoreline-cell C"><div class="lv">LV 6</div><div class="grade">C</div></div>
+    </div>
+  </section>
+
+  <!-- ─── 영상 6단계 요약 ─── -->
+  <section class="video-summary">
+    <div class="video-head">
+      <span class="video-eyebrow">📺 참고 영상</span>
+      <h3 class="video-title">The 6 Levels of Claude Code</h3>
+      <a class="video-link" href="https://youtu.be/TUKYbUIXLOE" target="_blank">youtu.be/TUKYbUIXLOE</a>
+    </div>
+    <p class="video-lede">Claude Code 활용 능력을 6단계로 나눈 가이드. <b>1단계부터 차근차근 쌓아 올라가는 구조</b> — 단순히 일 시키기에서 시작해서, 나중엔 여러 Claude를 팀처럼 굴리는 수준까지 발전해요.</p>
+    <ol class="video-list">
+      <li><div class="lv-head"><span class="lv-num">Lv 1</span><span class="lv-name">Prompt Engineer</span></div><div class="lv-desc">Claude한테 일을 정확하게 시킬 줄 알고, 결과가 맞는지 비판적으로 확인하기.</div></li>
+      <li><div class="lv-head"><span class="lv-num">Lv 2</span><span class="lv-name">Planner</span></div><div class="lv-desc">코딩 들어가기 전에 "이렇게 갈게요?" 합의부터 하기. 반박도 적극적으로.</div></li>
+      <li><div class="lv-head"><span class="lv-num">Lv 3</span><span class="lv-name">Context Engineer</span></div><div class="lv-desc">Claude의 단기 기억(컨텍스트)이 헷갈리지 않게 자료 양 조절하기.</div></li>
+      <li><div class="lv-head"><span class="lv-num">Lv 4</span><span class="lv-name">Integrations</span></div><div class="lv-desc">Claude한테 슬랙·DB·피그마 같은 외부 도구 연결해서 같이 쓰게 하기.</div></li>
+      <li><div class="lv-head"><span class="lv-num">Lv 5</span><span class="lv-name">Workflow Opt</span></div><div class="lv-desc">자주 하는 반복 작업을 매뉴얼(=스킬)로 만들어 자동화하기.</div></li>
+      <li><div class="lv-head"><span class="lv-num">Lv 6</span><span class="lv-name">Scaling</span></div><div class="lv-desc">Claude 한 명이 아니라 여러 명을 동시에 굴리기 (팀으로 확장).</div></li>
+    </ol>
+    <div class="video-note">💡 <b>Lv 1~6은 "어떤 능력이 있는가" 카테고리</b>이고, 아래 점수의 <b>A·B·C·D는 "얼마나 잘 쓰는가" 등급</b>이에요. 다른 축이에요.</div>
+  </section>
+
+  <!-- ─── 채점 카드 ─── -->
+  <h3 class="section"><span class="emoji">📝</span>레벨별 채점</h3>
+
+  <div class="cards">
+
+    <div class="card">
+      <div class="top">
+        <div>
+          <div class="lv">LV 1 · PROMPT ENGINEER</div>
+          <h4>활동량</h4>
+        </div>
+        <div class="grade-badge g-A">A</div>
+      </div>
+      <div class="metric"><b>159세션 / 30일</b> · 일평균 5.3회</div>
+      <div class="gauge"><div class="gauge-bar"><div class="gauge-fill mint" style="width: 95%"></div></div></div>
+      <div class="evidence">하루 평균 5.3번 사용 중. <b>일평균 3회 넘으면 A</b>. 한국어 프롬프트 정확하게 쓰고, 결과 검증하는 습관이 메모리에도 박혀 있음.</div>
+    </div>
+
+    <div class="card">
+      <div class="top">
+        <div>
+          <div class="lv">LV 2 · PLANNER</div>
+          <h4>Plan Mode 진입률</h4>
+        </div>
+        <div class="grade-badge g-A">A</div>
+      </div>
+      <div class="metric"><b>128 / 159 = 80.5%</b></div>
+      <div class="gauge"><div class="gauge-bar"><div class="gauge-fill mint" style="width: 80%"></div></div></div>
+      <div class="evidence">코딩 들어가기 전에 Claude와 계획부터 합의하는 비율. <b>10번 중 8번을 합의 모드로 시작</b>. 즉흥 실행보다 "이렇게 갈게요?" 한 번 확인하는 게 기본 습관으로 굳었음.</div>
+    </div>
+
+    <div class="card">
+      <div class="top">
+        <div>
+          <div class="lv">LV 3 · CONTEXT ENGINEER</div>
+          <h4>메모리 큐레이션</h4>
+        </div>
+        <div class="grade-badge g-A">A</div>
+      </div>
+      <div class="metric"><b>신규 12 / 총 41 = 29.2%</b></div>
+      <div class="gauge"><div class="gauge-bar"><div class="gauge-fill" style="width: 71%"></div></div></div>
+      <div class="evidence">Claude한테 알려준 메모리(=장기기억) 41개 중 12개를 최근 30일에 새로 넣음. 적당한 속도지만 <b>지운 건 0개</b>. 메모리가 50개 넘기 전에 한 번 정리하면 좋음.</div>
+    </div>
+
+    <div class="card">
+      <div class="top">
+        <div>
+          <div class="lv">LV 4 · INTEGRATIONS</div>
+          <h4>MCP 연동 폭</h4>
+        </div>
+        <div class="grade-badge g-A">A</div>
+      </div>
+      <div class="metric"><b>자동 2 / 실측 7+</b> (수동 보정)</div>
+      <div class="gauge"><div class="gauge-bar"><div class="gauge-fill mint" style="width: 92%"></div></div></div>
+      <div class="evidence">자동 측정은 2개만 잡았지만, 실제로는 <b>Databricks·Amplitude·Slack·Figma·Langfuse·GitHub·n8n</b> 등 7개 이상 연결해서 쓰는 중. 보험셀 PM 중에서 가장 폭넓음.</div>
+    </div>
+
+    <div class="card">
+      <div class="top">
+        <div>
+          <div class="lv">LV 5 · WORKFLOW</div>
+          <h4>스킬 가동률</h4>
+        </div>
+        <div class="grade-badge g-A">A</div>
+      </div>
+      <div class="metric"><b>23 / 29 = 79.3%</b></div>
+      <div class="gauge"><div class="gauge-bar"><div class="gauge-fill mint" style="width: 79%"></div></div></div>
+      <div class="evidence">만든 스킬(=반복 작업 자동화 매뉴얼) 29개 중 23개를 실제 사용 중. <b>지난번 33%에서 79%로 두 배 이상 상승</b>. 자주 쓰는 것: <code>/write-from-scan</code>(10번) · <code>/consultation_api</code>(7번).</div>
+    </div>
+
+    <div class="card">
+      <div class="top">
+        <div>
+          <div class="lv">LV 6 · SCALING</div>
+          <h4>Subagent 다양성</h4>
+        </div>
+        <div class="grade-badge g-C">C</div>
+      </div>
+      <div class="metric"><b>31회 · 1종</b> (general-purpose)</div>
+      <div class="gauge"><div class="gauge-bar"><div class="gauge-fill coral" style="width: 30%"></div></div></div>
+      <div class="evidence">Claude한테 일을 시킬 때 "다른 신입한테 외주" 주는 게 Subagent. 31번 다 같은 신입한테만 시켰음. 검색 전문, 리뷰 전문 등 <b>다른 종류 1번만 시도해도 점수 가장 크게 오름</b>.</div>
+    </div>
+
+  </div>
+
+  <!-- ─── 코멘트 ─── -->
+  <h3 class="section"><span class="emoji">💬</span>추가 코멘트</h3>
+
+  <div class="insight good">
+    <h4>이미 잘하고 있는 것 <span class="badge">👍 GOOD</span></h4>
+    <ul>
+      <li><b>5개 영역 모두 A 달성 🎯</b> — 1·2·3·4·5번 다 A 받았어요! 도구 운영자로는 거의 만점에 가까운 수준이에요.</li>
+      <li><b>스킬 가동률 79.3% 🚀</b> — 만든 스킬 5개 중 4개가 실제로 살아 움직여요. "만들기만 하고 안 쓰는" 함정 멋지게 피했네요.</li>
+      <li><b>Plan Mode 80.5% 👏</b> — 지난번보다 더 올라갔어요. "이렇게 갈게요?" 합의부터 하는 게 완전 몸에 뱄어요.</li>
+    </ul>
+  </div>
+
+  <div class="insight warn">
+    <h4>여기만 살짝 더 키우면 만점! <span class="badge">⚠ FOCUS</span></h4>
+    <ul>
+      <li>지금까지 Claude한테 외주 31번 다 <b>같은 신입한테만</b> 시켰어요. <code>Explore</code>(검색 전문)에 한 번만 시켜봐도 메인 작업이 훨씬 가벼워져요!</li>
+      <li><code>dispatching-parallel-agents</code>(여러 명 동시 굴리기) 아직 0번. 위클리·대시보드처럼 따로 돌릴 일은 매주 생기니까, 딱 한 번만 시도해보면 돼요.</li>
+      <li>이 한 영역만 챙기면 평점 <b>3.67 → 4.0 만점 직행</b>이에요. 진짜 코앞이에요 ✨</li>
+    </ul>
+  </div>
+
+  <div class="actions">
+    <h4><span class="emoji">📋</span>다음 30일 챌린지</h4>
+    <ol>
+      <li><b>Subagent 새 종류 1번만 도전 🎯</b> — 다음 보험셀 작업 한 건을 <code>subagent_type=Explore</code>로 격리해보기. 그게 끝!</li>
+      <li><b>병렬 작업 첫 시도 ⚡</b> — <code>dispatching-parallel-agents</code>로 위클리랑 대시보드 한 번에 돌려보기. 처음이 어렵지 두 번째부턴 익숙해요.</li>
+      <li><b>메모리 다이어트 시작 ✂️</b> — 30일간 한 번도 안 본 메모리 항목 정리. 5분이면 끝.</li>
+      <li><b>스킬 회수의 날 만들기 🧹</b> — 이번 달 안 쓴 스킬 6개만 점검. 정리하면 머리도 가벼워져요.</li>
+    </ol>
+  </div>
+
+  <footer>
+    <div class="stamp">✓ STAMPED 2026-05-24</div><br/>
+    측정 출처 · <code>~/.claude/skills/claude-code-report-card/measure.sh</code> · 30일치 세션 로그<br/>
+    Generated by Claude · 삼쩜삼 디자인시스템 + 위트 에디션
+  </footer>
+
+</div>
+</body>
+</html>
