@@ -58,7 +58,7 @@ bash ~/.claude/skills/claude-code-report-card/measure.sh 30
 5. **잘하고 있는 것 / 병목** — 정성 평가
 6. **다음 30일 액션** — 가장 약한 레벨 중심 체크리스트
 
-**디자인 토큰** (삼쩜삼 베이스 + 위트 에디션):
+**디자인 토큰** (블루 베이스 + 위트 에디션):
 ```
 /* 베이스 */
 --primary: #237AF2     --primary-soft: #E8F1FE

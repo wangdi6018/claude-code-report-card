@@ -71,7 +71,7 @@ bash ~/.claude/skills/claude-code-report-card/measure.sh 30
 
 ## 🎨 디자인
 
-삼쩜삼 디자인시스템(주 컬러 `#237AF2`) + 약간의 위트:
+블루 베이스 + 약간의 위트:
 - 폰트: Pretendard + Fredoka + DM Mono
 - 트로피 메달, 6단계 스코어라인, 골드 게이지 마커
 - 회사 슬랙에 공유해도 자연스럽고, 트위터에 캡쳐해도 시선 끌리는 톤
